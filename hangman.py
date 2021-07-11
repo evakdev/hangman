@@ -13,7 +13,7 @@ print("\n    ┬ ┬┬┌┬┐┬ ┬  ╔╦╗╔═╗╔═╗╔═╗╦
 """gc = pygsheets.authorize()
 sh = gc.open_by_key("1zA-ABM0c6UoZQ_hJLylKZ0NXHsZuemYoNWhxEFT_60U")
 sheet1 = sh[0]
-
+ ddddd
 words=[]
 for i in sheet1.range('a1:a400', returnas='matrix'):
     if len(i[0])>0:
