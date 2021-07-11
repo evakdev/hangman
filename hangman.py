@@ -109,13 +109,14 @@ class Game:
             msg = msg.format('None',self.wrong_limit-wrong_count)
         else:
             msg = msg.format(self.wrongs.join(), self.wrong_limit - wrong_count)
-            
+
         print (msg)
 
     def print_hanged_man(self) -> str:
 
         wrong_count=len(self.wrongs)
         print (HangedMan(level=wrong_count))
+
 
     def run(self):
         play=True
