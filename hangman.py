@@ -13,7 +13,7 @@ print("\n    ┬ ┬┬┌┬┐┬ ┬  ╔╦╗╔═╗╔═╗╔═╗╦
 """gc = pygsheets.authorize()
 sh = gc.open_by_key("1zA-ABM0c6UoZQ_hJLylKZ0NXHsZuemYoNWhxEFT_60U")
 sheet1 = sh[0]
- ddddd
+
 words=[]
 for i in sheet1.range('a1:a400', returnas='matrix'):
     if len(i[0])>0:
@@ -26,7 +26,20 @@ words=['abandon', 'abandonment', 'abbreviation', 'abeyance', 'abide', 'ability',
 
 
 class Errors: #or function?
-    pass
+    Duplicate = "You already entered that. Guess a new letter."
+    Nonletter = "That's not a letter. Please enter only letters."
+    OnlyOne = "Please enter only one letter."
+
+    def is_error(self,wrongs,corrects,entry):
+        error=None
+        if entry in wrongs or entry in corrects:
+            error=self.Duplicate
+        if not entry.isalpha():
+            error=self.Nonletter
+        if len(entry)>1:
+            error=self.OnlyOne
+
+        return error
 
 class HangedMan:
     """Gets level of hanging (number of wrong guesses) and returns related art."""
@@ -49,8 +62,12 @@ class HangedMan:
 
 class Message:
 
-    def say(message):
-        return random.choices(message)
+    def __init__(self,message,toprint=False):
+        msg=random.choices(message)
+        if toprint:
+            print(msg)
+        else:
+            return msg
 
     intro = ["""Hi! Ready to play some Hangman?
     If yes, type '1' to begin. 
@@ -83,6 +100,8 @@ class Message:
 
     wrong_list = ["Wrong Guesses: {}   {} left"]
 
+    exit = ['See you later!', 'Bye!', 'Come back soon!']
+
 
 
 
@@ -102,7 +121,7 @@ class Game:
 
     def print_wrongs(self) -> None:
         wrong_count = len(self.wrongs)
-        msg = Message.say(Message.wrong_list)
+        msg = Message(Message.wrong_list)
 
         if wrong_count==0:
             msg = msg.format('None',self.wrong_limit-wrong_count)
@@ -116,11 +135,47 @@ class Game:
         wrong_count=len(self.wrongs)
         print (HangedMan(level=wrong_count))
 
+    def validate_guess(self):
+        while True:
+            guess = input()
+            is_error = Errors.is_error(wrongs=self.wrongs,
+                                       corrects=self.corrects,
+                                       entry=guess)
+            if is_error:
+                print(is_error)
+            else:
+                return guess
+
+    def is_over(self):
+        wrong_count = len(self.wrongs)
+        if wrong_count==self.wrong_limit:
+            return True
+        return False
+    
+    def is_success(self):
+        if self.chosen_word==self.corrects:
+            return True
+        return False
+
+    def game_over(self):
+        Message(Message.fail,toprint=True)
 
     def run(self):
+        Message(Message.intro,toprint=True)
+        if input()=='1':
+            self.print_corrects()
+            Message(Message.first_guess,toprint=True)
+
+            while not(self.is_over()) and not(self.is_success()): 
+                guess=self.validate_guess()
+
+        else:
+            Message(Message.exit,toprint=True)
+            return
+
         play=True
         while play is True:
-            pass
+            self.print_corrects()
 
 
 
