@@ -5,3 +5,7 @@ Features of the game include:
   - showing different messages in every run 
   - using TOEFL words
   - custom stickman I drew myself because why not :)
+
+P.S. I've also included my old file as an example of bad code. 
+     I'm not saying the final one is the best possible, but it's definitely better. 
+     feel free to compare to see the differences!
