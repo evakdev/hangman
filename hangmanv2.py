@@ -1,5 +1,5 @@
 import random
-
+import time
 
 class Stickman:
     face = "         --------        \n   	| /     |       \n   	|       |       \n  	|     ෴෴෴    \n   	|    (͡❛ ͜ʖ ❛)    \n   	|      ┏皿┛     \n   	|      / \      \n	|               \n                    "
@@ -16,6 +16,94 @@ class Stickman:
         level_nums=self.levels.keys()
         return max(level_nums)
 
+class Message:
+
+    def banner():
+        messages=[
+            """\n :::    :::     :::     ::::    :::  ::::::::  ::::    ::::      :::     ::::    ::: \n :+:    :+:   :+: :+:   :+:+:   :+: :+:    :+: +:+:+: :+:+:+   :+: :+:   :+:+:   :+: \n +:+    +:+  +:+   +:+  :+:+:+  +:+ +:+        +:+ +:+:+ +:+  +:+   +:+  :+:+:+  +:+ \n +#++:++#++ +#++:++#++: +#+ +:+ +#+ :#:        +#+  +:+  +#+ +#++:++#++: +#+ +:+ +#+ \n +#+    +#+ +#+     +#+ +#+  +#+#+# +#+   +#+# +#+       +#+ +#+     +#+ +#+  +#+#+# \n #+#    #+# #+#     #+# #+#   #+#+# #+#    #+# #+#       #+# #+#     #+# #+#   #+#+# \n ###    ### ###     ### ###    ####  ########  ###       ### ###     ### ###    #### \n
+        """,
+            """\n    ┬ ┬┬┌┬┐┬ ┬  ╔╦╗╔═╗╔═╗╔═╗╦    ┬ ┬┌─┐┬─┐┌┬┐┌─┐ \n    ││││ │ ├─┤   ║ ║ ║║╣ ╠╣ ║    ││││ │├┬┘ ││└─┐ \n    └┴┘┴ ┴ ┴ ┴   ╩ ╚═╝╚═╝╚  ╩═╝  └┴┘└─┘┴└──┴┘└─┘ \n
+        """
+        ]
+        for line in messages:
+            print(line)
+
+    def intro():
+        messages = """Hi! Ready to play some Hangman?
+        If yes, type '1' to begin. 
+        If no, type '0' to end the program. \n"""
+        print(messages)
+
+    def first_guess():
+        messages = "\n Here we go! Guess a letter: \n"
+        print(messages)
+
+    def next_guess():
+        messages = [
+            "Guess another:", "Got another?", "You've got this! Try again:"
+        ]
+        random_choice = random.choices(messages)
+        print(*random_choice)
+
+    def correct():
+        messages=[
+            'Correct!',
+            'Awesome!',
+            'Yess!',
+            'Woohoo!',
+            'You got it!'
+        ]
+        random_choice = random.choices(messages)
+        print(*random_choice)
+
+    def wrong():
+        messages=[
+            'oops!',
+            'nope :(',
+            "don't lose your head!"
+            ]
+        random_choice = random.choices(messages)
+        print(*random_choice)
+
+    def win():
+        messages = [
+            "You did it! Congrats!",
+            "Well done!",
+            "🎊🥳🎊",
+            "Wooho!",
+            "Now that's what I'm talking about! well done!"
+            ]
+        random_choice = random.choices(messages)
+        print(*random_choice)
+
+    def lose(word):
+        messages= [
+            """\noops :(""",
+            """\nSorry :(""",
+            """\n😿😿""",
+            """\nOh well :(""",
+            """\nwell, you tried..."""
+            ]
+
+        random_choice = random.choices(messages)
+        print(*random_choice)
+        time.sleep(1)
+        next_msg="""the word was '{}'. You'll get it next time!"""
+        print(next_msg.format(word))
+    
+    def replay():
+        messages="""type 1 to play again, or type 0 to exit: \n"""
+
+        print(messages)
+
+    def exit():
+        messages = [
+            'See you later!',
+            'Bye!',
+            'Come back soon!'
+            ]
+        random_choice = random.choices(messages)
+        print(*random_choice)
 
 class Hangman:
 
@@ -97,17 +185,21 @@ class Hangman:
             return 'lose'
         return False
 
-
-
 def run_hangman(words,stickman=Stickman()):
-    #print game banner
-    #say hello and get confirmation to start
+
+    Message.banner()
+    time.sleep(1)
+    Message.intro()
+
+    if not(input() is '1'):
+        Message.exit()
+        return
 
     game=Hangman(words, wrong_limit=stickman.max_level())
+    Message.first_guess()
 
     while game.is_end() is False:
         print(*game.corrects)
-        #print instructions to send a letter.
         guess=input()
         while game.input_is_valid(guess) is False:
             guess=input()
@@ -115,16 +207,19 @@ def run_hangman(words,stickman=Stickman()):
         replaced=game.replace_blanks(guess)
         if replaced is False:
             game.add_wrong(guess)
-        
+
         stickman.print(level=game.stickman_level)
-        
         game.print_mistakes()
 
     if game.is_end() == 'win':
-        pass #print congrats
+        Message.win()
     else:
-        pass #print oops
-    #print wanna play again
+        Message.lose(''.join(game.word))
+
+    time.sleep(2)
+    Message.replay()
+    if input()=='1':
+        run_hangman(words)
     return
 
 from hangman import words
