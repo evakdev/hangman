@@ -2,8 +2,19 @@ import random
 
 
 class Stickman:
-    def max_level():
-        pass
+    face = "         --------        \n   	| /     |       \n   	|       |       \n  	|     ෴෴෴    \n   	|    (͡❛ ͜ʖ ❛)    \n   	|      ┏皿┛     \n   	|      / \      \n	|               \n                    "
+    body = "         --------        \n   	| /     |       \n   	|       |       \n  	|     ෴෴෴    \n   	|     (   )    \n   	|      ┏皿┛     \n   	|      / \      \n	|               \n                    "
+    head = "         --------        \n   	| /     |       \n   	|       |       \n  	|     ෴෴෴    \n   	|     (   )    \n   	|               \n   	|               \n	|               \n                    "
+    choobe = "         --------        \n   	| /     |       \n   	|       |       \n  	|               \n   	|              \n   	|               \n   	|               \n	|               \n                    "
+    dead = "         --------        \n   	| /     |       \n   	|       |       \n  	|     ෴෴෴    \n   	|     (*﹏*)    \n   	|      ┏皿┛     \n   	|      / \      \n	|               \n                    "
+    levels = {0: "", 1: choobe, 2: head, 3: body, 4: face, 5: dead}
+
+    def print(self,level):
+        print(self.levels[level])
+
+    def max_level(self):
+        level_nums=self.levels.keys()
+        return max(level_nums)
 
 
 class Hangman:
@@ -21,9 +32,9 @@ class Hangman:
         self.wrong_limit: int = wrong_limit
         self.stickman_level: int = 0
 
-    def validate_input(self,answer,) -> bool:
+    def input_is_valid(self,answer,) -> bool:
         """validates user's answer and prints corresponding error. 
-        return True if there was an error and False if there wasn't.
+        return False if there was an error and True if there wasn't.
         """
 
         errors={
@@ -34,15 +45,15 @@ class Hangman:
 
         if answer in self.wrongs or answer in self.corrects:
             print(errors['Duplicate'])
-            return True
+            return False
         if not answer.isalpha():
             print(errors['Nonletter'])
-            return True
+            return False
         if len(answer)>1:
             print(errors['OnlyOne'])
-            return True
+            return False
 
-        return False
+        return True
 
 
     def replace_blanks(self,letter) -> bool:
@@ -70,7 +81,7 @@ class Hangman:
         if self.stickman_level==0:
             print(template.format('None',mistkes_left))
         else:
-            print(template.format(self.stickman_level,mistkes_left))
+            print(template.format(' '.join(self.wrongs),mistkes_left))
 
         return
 
@@ -87,7 +98,7 @@ class Hangman:
         return False
 
 
-words=[]
+
 def run_hangman(words,stickman=Stickman()):
     #print game banner
     #say hello and get confirmation to start
@@ -95,21 +106,27 @@ def run_hangman(words,stickman=Stickman()):
     game=Hangman(words, wrong_limit=stickman.max_level())
 
     while game.is_end() is False:
-        print(game.corrects)
+        print(*game.corrects)
         #print instructions to send a letter.
         guess=input()
-        while game.validate_input(guess) is False:
+        while game.input_is_valid(guess) is False:
             guess=input()
 
         replaced=game.replace_blanks(guess)
-        if replaced is True:
-            pass   #print congrats
-        else:
+        if replaced is False:
             game.add_wrong(guess)
-            stickman.print(level=game.stickman_level)
-            game.print_mistakes()
+        
+        stickman.print(level=game.stickman_level)
+        
+        game.print_mistakes()
+
     if game.is_end() == 'win':
         pass #print congrats
     else:
         pass #print oops
     #print wanna play again
+    return
+
+from hangman import words
+
+run_hangman(words)
